@@ -21,6 +21,10 @@ JM_SOCIAL_COLUMN = "How much time would you like to spend within your family foc
 # SM PREFERENCES
 SM_TIME_COLUMN = "Time"
 
+# SETTINGS
+MIN_FAMILY_SIZE = 3
+MAX_FAMILY_SIZE = 4
+
 
 def parse_sm_slots() -> list[Slot]:
     slots = []
@@ -99,7 +103,7 @@ def main():
     random.shuffle(users)
     random.shuffle(preferences)
 
-    config = MatcherConfig(min_family_size=3, max_family_size=6, sociability_bias=1)
+    config = MatcherConfig(min_family_size=MIN_FAMILY_SIZE, max_family_size=MAX_FAMILY_SIZE, sociability_bias=0)
 
     matching = run_matcher(users, preferences, slots, config)
 

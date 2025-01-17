@@ -103,7 +103,7 @@ def main():
     random.shuffle(users)
     random.shuffle(preferences)
 
-    config = MatcherConfig(min_family_size=MIN_FAMILY_SIZE, max_family_size=MAX_FAMILY_SIZE, sociability_bias=0)
+    config = MatcherConfig(min_family_size=MIN_FAMILY_SIZE, max_family_size=MAX_FAMILY_SIZE, sociability_bias=0.1)
 
     matching = run_matcher(users, preferences, slots, config)
 

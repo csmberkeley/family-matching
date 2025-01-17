@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from itertools import combinations
+from typing import Union
 
 import cvxpy as cp
 
@@ -89,25 +91,23 @@ def get_optimization(
     )
 
     # add a penalty for differences in sociability
-    # sociability_difference = 0
-    # sociability_constraints = []
-    # for slot in slots:
-    #     num_assigned = sum(assignment[user.id, slot.id] for user in jm_users)
-    #     total_sociability = sum(assignment[user.id, slot.id] * user.sociability for user in jm_users)
-    #
-    #     average_sociability = cp.Variable()
-    #     sociability_constraints.extend([
-    #         average_sociability * num_assigned == total_sociability
-    #     ])
-    #
-    #     for user in jm_users:
-    #         variable = assignment[user.id, slot.id]
-    #         sociability_difference += variable * cp.abs(
-    #             user.sociability - average_sociability
-    #         )
-    #
-    # objective += config.sociability_bias * sociability_difference
-    # constraints.extend(sociability_constraints)
+    sociability_difference = 0
+    sociability_constraints = []
+    for slot in slots:
+        total_abs_differences = 0
+        for user1, user2 in combinations(jm_users, 2):
+            user1_assigned = assignment[user1.id, slot.id]
+            user2_assigned = assignment[user2.id, slot.id]
+            both_assigned = user1_assigned and user2_assigned
+
+            total_abs_differences += both_assigned * abs(
+                user1.sociability - user2.sociability
+            )
+
+        sociability_difference += total_abs_differences
+
+    objective += config.sociability_bias * sociability_difference
+    constraints.extend(sociability_constraints)
 
     return objective, constraints, assignment
 
